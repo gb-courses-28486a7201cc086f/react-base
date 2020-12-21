@@ -1,1 +1,3 @@
-console.log("Hey!");
+import { hello } from "./helper";
+
+hello();
