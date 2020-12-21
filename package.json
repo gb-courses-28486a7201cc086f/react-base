@@ -1,0 +1,34 @@
+{
+  "name": "react-base",
+  "version": "0.1.0",
+  "description": "react course project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "./node_modules/webpack/bin/webpack.js",
+    "dev": "npm run webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gb-courses-28486a7201cc086f/react-base.git"
+  },
+  "keywords": [
+    "react",
+    "js",
+    "course",
+    "messages"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gb-courses-28486a7201cc086f/react-base/issues"
+  },
+  "homepage": "https://github.com/gb-courses-28486a7201cc086f/react-base#readme",
+  "dependencies": {
+    "webpack": "^5.11.0",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.2.0"
+  }
+}
