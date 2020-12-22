@@ -1,13 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { hello } from "./helper";
+import { MessageContainer } from "./components/messages.jsx";
 
-hello();
+class MessageStore {
+    constructor() {
+        this.messages = ["Привет!", "Как дела?"];
+    }
 
-const Element = (props) => <h1 className="element">Hello, React!</h1>;
+    getMessages() {
+        return this.messages;
+    }
+
+    addMessage(text) {
+        this.messages.push(text);
+        console.log(this.messages);
+    }
+}
 
 ReactDOM.render(
-    <Element/>,
+    <MessageContainer store={new MessageStore()} />,
     document.getElementById("root")
 );
+
