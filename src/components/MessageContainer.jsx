@@ -20,13 +20,20 @@ export default (props) => {
     useEffect(() => {
         let interval = setInterval(() => {
             // update component state to render new messages
-            setMessages(props.store.getMessages());
+            // only if new messages exists
+            setMessages(oldMsg => {
+                let newMsg = props.store.getMessages();
+                if (newMsg.length > oldMsg.length) {
+                    return newMsg;
+                }
+                return oldMsg;
+            });
         }, checkMsgInterval);
         // cleanup
         return () => {
             clearInterval(interval);
         };
-    }, messages);
+    }, []); // setup hook once
 
     function sendMessage(text) {
         props.store.addMessage(defaultAuthor, text);
