@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import MessageContainer from "./components/MessageContainer";
 
@@ -43,7 +44,9 @@ class MessageStore {
 
 
 ReactDOM.render(
-    <MessageContainer store={new MessageStore()} />,
+    <MuiThemeProvider>
+        <MessageContainer store={new MessageStore()} />
+    </MuiThemeProvider>,
     document.getElementById("root")
 );
 

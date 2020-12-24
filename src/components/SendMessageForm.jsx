@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { TextField, FloatingActionButton } from 'material-ui';
+import SendIcon from 'material-ui/svg-icons/content/send';
+
 
 /**
  * Displays input for new message and "send" button.
@@ -8,9 +11,21 @@ import React, { useState } from "react";
  */
 export const SendMessageForm = (props) => {
     const [text, setText] = useState("");
+    const textInput = useRef(null);
+    useEffect(() => {
+        textInput.current.focus();
+    }, []); // focus only once
 
     function handleChange(e) {
         setText(e.target.value);
+    }
+
+    function handleKeyUp(e) {
+        // send on enter
+        if (e.keyCode === 13) {
+            props.sendMessage(text);
+            setText("");
+        }
     }
 
     function handleClick() {
@@ -19,9 +34,18 @@ export const SendMessageForm = (props) => {
     }
 
     return (
-        <div>
-            <input type="text" value={text} onChange={handleChange}/><br/>
-            <button onClick={handleClick}>Отправить сообщение</button>
+        <div className="message-new-container">
+            <TextField 
+                fullWidth={ true }
+                hintText="Введите сообщение"
+                ref={textInput}
+                value={text} 
+                onChange={handleChange} 
+                onKeyUp={handleKeyUp}            
+            />
+            <FloatingActionButton onClick={handleClick}>
+                <SendIcon/>
+            </FloatingActionButton>
         </div>
     );
 };
