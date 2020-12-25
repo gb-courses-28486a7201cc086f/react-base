@@ -13,8 +13,9 @@ import "../styles/styles.css"
  * @param {Object} props.store Object which stores messages
  * @param {function(string, string): any} props.store.addMessage 
  * @param {function(): Array} props.store.getMessages 
+ * @param {string} props.className CSS classes list
  */
-export default (props) => {
+export const MessageContainer = (props) => {
     const defaultAuthor = "user";
     const checkMsgInterval = 1000;
 
@@ -45,7 +46,7 @@ export default (props) => {
     };
 
     return (
-        <div className="layout">
+        <div className="message-container">
             <MessageList messages={messages} me={defaultAuthor}/>
             <SendMessageForm sendMessage={sendMessage} />
         </div>

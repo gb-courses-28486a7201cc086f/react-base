@@ -9,7 +9,7 @@ module.exports = {
         publicPath: "/static/build/"
     },
     entry: {
-        app: "./index.js"
+        app: "./index.jsx"
     },
     context: path.resolve(__dirname, "src"),
     output: {

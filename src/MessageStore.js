@@ -1,11 +1,9 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import MessageContainer from "./components/MessageContainer";
-
-
-class MessageStore {
+/**
+ * MessageStore is container for chat messages
+ * 
+ */
+export class MessageStore {
     constructor() {
         this.bot = {
             "name": "bot",
@@ -41,12 +39,4 @@ class MessageStore {
         return msg;
     }
 }
-
-
-ReactDOM.render(
-    <MuiThemeProvider>
-        <MessageContainer store={new MessageStore()} />
-    </MuiThemeProvider>,
-    document.getElementById("root")
-);
 
