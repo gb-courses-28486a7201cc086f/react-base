@@ -16,7 +16,8 @@ export default (props) => {
     const defaultAuthor = "user";
     const checkMsgInterval = 1000;
 
-    const [messages, setMessages] = useState(props.store.getMessages());
+    // use callback inside useState to calculate initial state only once
+    const [messages, setMessages] = useState(() => props.store.getMessages());
     useEffect(() => {
         let interval = setInterval(() => {
             // update component state to render new messages
