@@ -1,0 +1,9 @@
+.vs-code
+**/*.swp
+**/*.swo
+**/*.log*
+
+static/build/*
+node_modules/*
+package-lock.json
+
