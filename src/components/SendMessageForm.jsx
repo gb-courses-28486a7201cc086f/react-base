@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, FloatingActionButton } from 'material-ui';
 import SendIcon from 'material-ui/svg-icons/content/send';
 
@@ -8,13 +8,10 @@ import SendIcon from 'material-ui/svg-icons/content/send';
  * 
  * @param {Object} props Component properties object
  * @param {function(string)} props.sendMessage Callback for sending new message from input
+ * @param {Object} props.focus Ref object to focus on input field
  */
 export const SendMessageForm = (props) => {
     const [text, setText] = useState("");
-    const textInput = useRef(null);
-    useEffect(() => {
-        textInput.current.focus();
-    }, []); // focus only once
 
     function handleChange(e) {
         setText(e.target.value);
@@ -38,7 +35,7 @@ export const SendMessageForm = (props) => {
             <TextField 
                 fullWidth={ true }
                 hintText="Введите сообщение"
-                ref={textInput}
+                ref={props.focusRef}
                 value={text} 
                 onChange={handleChange} 
                 onKeyUp={handleKeyUp}            

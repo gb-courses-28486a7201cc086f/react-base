@@ -10,14 +10,9 @@ import Hidden from '@material-ui/core/Hidden';
  * Displays header panel
  * 
  * @param {Object} props Component properties object
- * @param {string} props.chatId ID of current chat
- * @param {Object} props.store Object which stores chats
- * @param {function(string, string, string): any} props.store.getChatTitles 
+ * @param {string} props.chatTitle Title of current chat
  */
 export const Header = (props) => {
-    const titlesMap = props.store.getChatTitles();
-    const currentChatTitle = titlesMap[props.chatId];
-
     return (
         <AppBar position="static" className="header">
             <Toolbar className="header-toolbar">
@@ -27,7 +22,7 @@ export const Header = (props) => {
                     </IconButton>
                 </Hidden>
                 <Typography variant="h6">
-                    Chat: {currentChatTitle}
+                    Chat: {props.chatTitle}
                 </Typography>
             </Toolbar>
         </AppBar>

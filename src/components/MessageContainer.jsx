@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MessageList } from "./MessageList";
 import { SendMessageForm } from "./SendMessageForm";
 
@@ -9,23 +9,30 @@ import { SendMessageForm } from "./SendMessageForm";
  * 
  * @param {Object} props Component properties object
  * @param {string} props.chatId ID of current chat
- * @param {Object} props.store Object which stores messages
- * @param {function(string, string, string): any} props.store.addMessage 
- * @param {function(string): Array} props.store.getMessages 
+ * @param {function(string, string): any} props.addMessage 
+ * @param {function(): Array} props.getMessages 
  */
 export const MessageContainer = (props) => {
     const defaultAuthor = "user";
     const checkMsgInterval = 1000;
-    const chatId = props.chatId;
+
+    // focus on send form when subscription changed
+    const formFocus = useRef(null);
+    useEffect(() => {
+        formFocus.current.focus();
+    }, [props.getMessages]); 
 
     // use callback inside useState to calculate initial state only once
-    const [messages, setMessages] = useState(() => props.store.getMessages(chatId));
+    const [messages, setMessages] = useState(() => props.getMessages());
+
+    // rerender when new messages has been received
+    // update hook when subsription has changed
     useEffect(() => {
         let interval = setInterval(() => {
             // update component state to render new messages
             // only if new messages exists
             setMessages(oldMsg => {
-                let newMsg = props.store.getMessages(chatId);
+                let newMsg = props.getMessages();
                 if (newMsg.length > oldMsg.length) {
                     return newMsg;
                 }
@@ -36,18 +43,26 @@ export const MessageContainer = (props) => {
         return () => {
             clearInterval(interval);
         };
-    }, []); // setup hook once
+    }, [props.getMessages]);
+
+    // update message list immideatly when subsription has changed
+    useEffect(() => {
+        setMessages(props.getMessages());
+    }, [props.getMessages]);
 
     function sendMessage(text) {
-        props.store.addMessage(chatId, defaultAuthor, text);
+        props.addMessage(defaultAuthor, text);
         // update component state to render again
-        setMessages(props.store.getMessages(chatId));
+        setMessages(props.getMessages());
     };
 
     return (
         <>
             <MessageList messages={messages} me={defaultAuthor}/>
-            <SendMessageForm sendMessage={sendMessage} />
+            <SendMessageForm 
+                sendMessage={sendMessage}
+                focusRef={formFocus}
+                />
         </>
     );
 };
