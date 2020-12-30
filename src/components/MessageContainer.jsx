@@ -9,21 +9,22 @@ import { SendMessageForm } from "./SendMessageForm";
  * 
  * @param {Object} props Component properties object
  * @param {Object} props.store Object which stores messages
- * @param {function(string, string): any} props.store.addMessage 
- * @param {function(): Array} props.store.getMessages 
+ * @param {function(string, string, string): any} props.store.addMessage 
+ * @param {function(string): Array} props.store.getMessages 
  */
 export const MessageContainer = (props) => {
     const defaultAuthor = "user";
     const checkMsgInterval = 1000;
+    const chatId = "1";
 
     // use callback inside useState to calculate initial state only once
-    const [messages, setMessages] = useState(() => props.store.getMessages());
+    const [messages, setMessages] = useState(() => props.store.getMessages(chatId));
     useEffect(() => {
         let interval = setInterval(() => {
             // update component state to render new messages
             // only if new messages exists
             setMessages(oldMsg => {
-                let newMsg = props.store.getMessages();
+                let newMsg = props.store.getMessages(chatId);
                 if (newMsg.length > oldMsg.length) {
                     return newMsg;
                 }
@@ -37,9 +38,9 @@ export const MessageContainer = (props) => {
     }, []); // setup hook once
 
     function sendMessage(text) {
-        props.store.addMessage(defaultAuthor, text);
+        props.store.addMessage(chatId, defaultAuthor, text);
         // update component state to render again
-        setMessages(props.store.getMessages());
+        setMessages(props.store.getMessages(chatId));
     };
 
     return (

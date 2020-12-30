@@ -8,6 +8,13 @@ import { MessageStore } from "../MessageStore";
 
 import "../styles/styles.css"
 
+const messages = new MessageStore()
+
+/**
+ * Top-level component, which contains header, chat list and message area
+ * @param {Object} props Component properties object
+ * @param {string} props.chatId ID of current chat
+ */
 export const Layout = (props) => {
     return (
         <div className="root">
@@ -17,7 +24,7 @@ export const Layout = (props) => {
                     <ChatList/>
                 </Grid>
                 <Grid item xs={12} sm className="message-container">
-                    <MessageContainer store={new MessageStore()}/>
+                    <MessageContainer store={messages} chatId={props.chatId}/>
                 </Grid>
             </Grid>
         </div>

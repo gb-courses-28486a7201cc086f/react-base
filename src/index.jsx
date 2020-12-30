@@ -7,7 +7,7 @@ import { Layout } from "./components/Layout";
 
 ReactDOM.render(
     <MuiThemeProvider>
-        <Layout/>
+        <Layout chatId="1"/>
     </MuiThemeProvider>,
     document.getElementById("root")
 );
