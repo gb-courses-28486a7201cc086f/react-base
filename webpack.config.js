@@ -7,7 +7,10 @@ module.exports = {
     devServer: {
         host: "0.0.0.0",
         port: "8180",
-        publicPath: "/static/build/"
+        publicPath: "/static/build/",
+        historyApiFallback: {
+            index: "index.html"
+        },
     },
     devtool: "inline-cheap-module-source-map",
     entry: {

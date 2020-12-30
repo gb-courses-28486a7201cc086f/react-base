@@ -8,6 +8,7 @@ import { SendMessageForm } from "./SendMessageForm";
  * List of messages to display gets using props.store.getMessages() method.
  * 
  * @param {Object} props Component properties object
+ * @param {string} props.chatId ID of current chat
  * @param {Object} props.store Object which stores messages
  * @param {function(string, string, string): any} props.store.addMessage 
  * @param {function(string): Array} props.store.getMessages 
@@ -15,7 +16,7 @@ import { SendMessageForm } from "./SendMessageForm";
 export const MessageContainer = (props) => {
     const defaultAuthor = "user";
     const checkMsgInterval = 1000;
-    const chatId = "1";
+    const chatId = props.chatId;
 
     // use callback inside useState to calculate initial state only once
     const [messages, setMessages] = useState(() => props.store.getMessages(chatId));
