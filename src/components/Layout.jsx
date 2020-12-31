@@ -22,7 +22,7 @@ let getMessages = () => {
 }
 let addMessage = (author, text) => {
     return messages.addMessage(defaultChatId, author, text);
-} 
+}
 
 /**
  * Top-level component, which contains header, chat list and message area
@@ -46,6 +46,12 @@ export const Layout = (props) => {
         setChatId(currentChatId);
     }, [currentChatId]);
     
+    // add chat 
+    const newChat = (title) => {
+        let newChatId = messages.addChat(title);
+        setChatId(newChatId);
+    }
+    
     // TODO switch to chat list on xs screens
     const backButton = (
         <Hidden smUp>
@@ -61,26 +67,29 @@ export const Layout = (props) => {
 
     const profileButton = (
         <Link to={`${props.profileUri}`}>
-            <Button color="inherit">Profile</Button>
+            <Button color="inherit">Профиль</Button>
         </Link>
     );
 
     return (
         <div className="root">
             <Header 
-                title={`Chat: ${titlesMap[chatId]}`}
+                title={`Чат: ${titlesMap[chatId]}`}
                 leftButton={backButton}
                 rightButton={profileButton}
                 />
             <Grid container className="content-container">
                 <Grid item xs sm={4} xl={2} className="chat-list">
                     <ChatList 
+                        chatId={chatId}
                         chatTitles={titlesMap}
                         chatsBaseUri={props.chatsBaseUri}
+                        addChat={newChat}
                         />
                 </Grid>
                 <Grid item xs={12} sm className="message-container">
                     <MessageContainer 
+                        chatId={chatId}
                         getMessages={getMessages}
                         addMessage={addMessage}
                         />

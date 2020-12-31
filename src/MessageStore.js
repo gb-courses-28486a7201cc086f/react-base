@@ -69,9 +69,10 @@ export class MessageStore {
     }
 
     addChat(chatTitle) {
-        let nextId = Object.keys(this._chats).length;
+        let nextId = Object.keys(this._chats).length + 1;
         this._chats[nextId] = {title: chatTitle};
         this._messages[nextId] = this._getWelcomeMsg(chatTitle);
+        return nextId;
     }
 }
 

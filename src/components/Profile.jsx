@@ -15,7 +15,7 @@ import "../styles/styles.css"
 export const Profile = (props) => {
     const chatsButton = (
         <Link to={"/"}>
-            <Button color="inherit">Messages</Button>
+            <Button color="inherit">Чаты</Button>
         </Link>
     );
     
