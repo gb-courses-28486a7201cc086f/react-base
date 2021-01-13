@@ -20,11 +20,9 @@ function getChatList() {
 
 export const ChatList = (props) => {
     return (
-        <div className="chat-list">
-            <List>
-                <Subheader>Recent chats</Subheader>
-                { getChatList() }
-            </List>
-        </div>
+        <List>
+            <Subheader>Recent chats</Subheader>
+            { getChatList() }
+        </List>
     );
 }

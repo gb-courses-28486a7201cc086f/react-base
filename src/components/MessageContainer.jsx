@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { MessageList } from "./MessageList";
 import { SendMessageForm } from "./SendMessageForm";
 
-import "../styles/styles.css"
-
 /**
  * Displays list of messages and new message form.
  * Clicking "send" adds new message (using props.store.addMessage(author, text) method).
@@ -13,7 +11,6 @@ import "../styles/styles.css"
  * @param {Object} props.store Object which stores messages
  * @param {function(string, string): any} props.store.addMessage 
  * @param {function(): Array} props.store.getMessages 
- * @param {string} props.className CSS classes list
  */
 export const MessageContainer = (props) => {
     const defaultAuthor = "user";
@@ -46,10 +43,10 @@ export const MessageContainer = (props) => {
     };
 
     return (
-        <div className="message-container">
+        <>
             <MessageList messages={messages} me={defaultAuthor}/>
             <SendMessageForm sendMessage={sendMessage} />
-        </div>
+        </>
     );
 };
 
