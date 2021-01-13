@@ -9,7 +9,7 @@ module.exports = {
         publicPath: "/static/build/"
     },
     entry: {
-        app: "./index.js"
+        app: "./index.jsx"
     },
     context: path.resolve(__dirname, "src"),
     output: {
@@ -29,6 +29,10 @@ module.exports = {
                 options: {
                     presets: ["@babel/env", "@babel/react"]
                 }
+            },
+            {
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"]
             }
         ]
     }

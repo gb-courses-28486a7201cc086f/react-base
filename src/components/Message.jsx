@@ -7,7 +7,15 @@ import React from "react";
  * @param {Object} props.message Message content
  * @param {string} props.message.author Author of message
  * @param {string} props.message.text Text of message
+ * @param {string} props.me Name of current user
  */
 export const Message = (props) => {
-    return <div className="msg">{props.message.author}&gt;&gt;&gt; {props.message.text}</div>;
+    let align = props.message.author === props.me? "flex-end" : "flex-start";
+
+    return (
+        <div className="message" style={{alignSelf: align}}>
+            <div>{props.message.text}</div>
+            <div className="message-sender">{props.message.author}</div>
+        </div>
+    );
 };
