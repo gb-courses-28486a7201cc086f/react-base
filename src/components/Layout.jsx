@@ -16,13 +16,6 @@ import "../styles/styles.css"
 const messages = new MessageStore();
 // display first available chat by default
 const defaultChatId = Object.keys(messages.getChatTitles())[0];
-// get/add methods for message list 
-let getMessages = () => {
-    return messages.getMessages(defaultChatId);
-}
-let addMessage = (author, text) => {
-    return messages.addMessage(defaultChatId, author, text);
-}
 
 /**
  * Top-level component, which contains header, chat list and message area
@@ -35,18 +28,22 @@ export const Layout = (props) => {
     const titlesMap = messages.getChatTitles();
     
     const [chatId, setChatId] = useState(currentChatId);
-    // update get/add methods when chat changed
+    // switch chat on props change
     useEffect(() => {
-        getMessages = () => {
-            return messages.getMessages(currentChatId);
-        }
-        addMessage = (author, text) => {
-            return messages.addMessage(currentChatId, author, text);
-        }
         setChatId(currentChatId);
     }, [currentChatId]);
     
-    // add chat 
+    // update get/add methods on each render:
+    // it is normal because we rerender layout when chat 
+    // has been changed
+    const getMessages = () => {
+        return messages.getMessages(chatId);
+    }
+    const addMessage = (author, text) => {
+        return messages.addMessage(chatId, author, text);
+    }
+    
+    // add chat and switch to it
     const newChat = (title) => {
         let newChatId = messages.addChat(title);
         setChatId(newChatId);
@@ -89,7 +86,6 @@ export const Layout = (props) => {
                 </Grid>
                 <Grid item xs={12} sm className="message-container">
                     <MessageContainer 
-                        chatId={chatId}
                         getMessages={getMessages}
                         addMessage={addMessage}
                         />

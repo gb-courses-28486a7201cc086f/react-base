@@ -50,6 +50,14 @@ export const ChatList = (props) => {
         setText(e.target.value);
     }
 
+    function handleKeyUp(e) {
+        // send on enter
+        if (e.keyCode === 13) {
+            props.addChat(text);
+            setText("");
+        }
+    }
+
     function handleClick() {
         props.addChat(text);
         setText("");
@@ -65,7 +73,8 @@ export const ChatList = (props) => {
                 <TextField 
                     hintText="Имя чата"
                     value={text} 
-                    onChange={handleChange}        
+                    onChange={handleChange}
+                    onKeyUp={handleKeyUp}      
                 />
                 <Button variant="contained" onClick={handleClick}>+</Button>
             </ListItem>

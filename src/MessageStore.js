@@ -10,11 +10,11 @@ export class MessageStore {
             "delay": 1000
         };
         this._chats = {
-            1: {title: "Brendan Lim"},
-            2: {title: "Eric Hoffman"},
-            3: {title: "Grace Ng"},
-            4: {title: "Kerem Suer"},
-            5: {title: "Raquel Parrado"},
+            "1": {title: "Brendan Lim"},
+            "2": {title: "Eric Hoffman"},
+            "3": {title: "Grace Ng"},
+            "4": {title: "Kerem Suer"},
+            "5": {title: "Raquel Parrado"},
         };
         this._messages = {};
         // fill all chats with default welcome messges
@@ -69,7 +69,7 @@ export class MessageStore {
     }
 
     addChat(chatTitle) {
-        let nextId = Object.keys(this._chats).length + 1;
+        let nextId = (Object.keys(this._chats).length + 1).toString();
         this._chats[nextId] = {title: chatTitle};
         this._messages[nextId] = this._getWelcomeMsg(chatTitle);
         return nextId;

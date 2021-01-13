@@ -8,7 +8,6 @@ import { SendMessageForm } from "./SendMessageForm";
  * List of messages to display gets using props.store.getMessages() method.
  * 
  * @param {Object} props Component properties object
- * @param {string} props.chatId ID of current chat
  * @param {function(string, string): any} props.addMessage 
  * @param {function(): Array} props.getMessages 
  */
