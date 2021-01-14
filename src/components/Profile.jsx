@@ -22,7 +22,7 @@ export const Profile = (props) => {
     return (
         <div className="root">
             <Header 
-                title={"Profile"}
+                title={"Профиль"}
                 rightButton={chatsButton}
                 />
             <Grid container className="content-container">
