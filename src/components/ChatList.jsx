@@ -10,20 +10,20 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Subheader from 'material-ui/Subheader';
 import Button from '@material-ui/core/Button';
 
-function makeChatList(titlesMap, currentChatId, baseUri) {
-    const makeListItem = (chatId) => {
-        const chatTitle = titlesMap[chatId];
+function makeChatList(titlesMap, currentChat) {
+    const makeListItem = (chat, idx) => {
+        const chatTitle = titlesMap[chat];
         return (
             <Link 
-                key={`chat_${chatId}`}
-                to={`${baseUri}/${chatId}/`}
-            >
+                key={`chat_${idx}`}
+                to={`${chat}`}
+                >
                 <ListItem
                     button
-                    selected={chatId === currentChatId}
-                >
+                    selected={chat === currentChat}
+                    >
                     <ListItemAvatar>
-                        <Avatar src={`https://picsum.photos/seed/${chatId}/200`} />
+                        <Avatar src={`https://picsum.photos/seed/${idx}/200`} />
                     </ListItemAvatar>
                     <ListItemText primary={chatTitle}/>
                 </ListItem>
@@ -31,16 +31,15 @@ function makeChatList(titlesMap, currentChatId, baseUri) {
         );
     }
 
-    return Object.keys(titlesMap).map(chatId => makeListItem(chatId)); 
+    return Object.keys(titlesMap).map((chat, idx) => makeListItem(chat, idx)); 
 }
 
 /**
  * Displays chats list panel
  * 
  * @param {Object} props Component properties object
- * @param {string} props.chatId ID of current chat
- * @param {string} props.chatsBaseUri Chats URI base path 
- * @param {Object} props.chatTitles Object which contans all chat titles
+ * @param {string} props.chatPath URI path of current chat
+ * @param {Object} props.chatTitles Object which contans all chat titles (path as key)
  * @param {function(string)} props.addChat Callback for new chat adding
  */
 export const ChatList = (props) => {
@@ -66,7 +65,7 @@ export const ChatList = (props) => {
     return (
         <List>
             <Subheader>Активные чаты</Subheader>
-            { makeChatList(props.chatTitles, props.chatId, props.chatsBaseUri) }
+            { makeChatList(props.chatTitles, props.chatPath) }
             <Divider/>
             <Subheader>Новый чат</Subheader>
             <ListItem>
@@ -75,7 +74,7 @@ export const ChatList = (props) => {
                     value={text} 
                     onChange={handleChange}
                     onKeyUp={handleKeyUp}      
-                />
+                    />
                 <Button variant="contained" onClick={handleClick}>+</Button>
             </ListItem>
         </List>
