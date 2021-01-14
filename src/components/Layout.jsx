@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link, useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -24,29 +24,38 @@ const defaultChatId = Object.keys(messages.getChatTitles())[0];
  * @param {string} props.chatsBaseUri Chats URI base path 
  */
 export const Layout = (props) => {
-    const currentChatId = props.chatId === undefined? defaultChatId : props.chatId;
+    const makeChatPath = (id) =>  `${props.chatsBaseUri}/${id}`;
+    const history = useHistory();
+
+    // shitch to default chat if not selected
+    if (props.chatId === undefined) {
+        history.push(makeChatPath(defaultChatId));
+        return <></>;
+    }
+
+    const currentChatId = props.chatId;
+    const currentPath = makeChatPath(currentChatId);
     const titlesMap = messages.getChatTitles();
+
+    // create new map with uri paths as keys (instead of ids)
+    // to use in ChatList component
+    let pathMap = {};
+    for (let id in titlesMap) {
+        pathMap[makeChatPath(id)] = titlesMap[id];
+    }
     
-    const [chatId, setChatId] = useState(currentChatId);
-    // switch chat on props change
-    useEffect(() => {
-        setChatId(currentChatId);
-    }, [currentChatId]);
-    
-    // update get/add methods on each render:
-    // it is normal because we rerender layout when chat 
-    // has been changed
+    // update get/add message methods and rerender
     const getMessages = () => {
-        return messages.getMessages(chatId);
+        return messages.getMessages(currentChatId);
     }
     const addMessage = (author, text) => {
-        return messages.addMessage(chatId, author, text);
+        return messages.addMessage(currentChatId, author, text);
     }
     
     // add chat and switch to it
     const newChat = (title) => {
         let newChatId = messages.addChat(title);
-        setChatId(newChatId);
+        history.push(makeChatPath(newChatId));
     }
     
     // TODO switch to chat list on xs screens
@@ -71,16 +80,15 @@ export const Layout = (props) => {
     return (
         <div className="root">
             <Header 
-                title={`Чат: ${titlesMap[chatId]}`}
+                title={`Чат: ${titlesMap[currentChatId]}`}
                 leftButton={backButton}
                 rightButton={profileButton}
                 />
             <Grid container className="content-container">
                 <Grid item xs sm={4} xl={2} className="chat-list">
                     <ChatList 
-                        chatId={chatId}
-                        chatTitles={titlesMap}
-                        chatsBaseUri={props.chatsBaseUri}
+                        chatPath={currentPath}
+                        chatTitles={pathMap}
                         addChat={newChat}
                         />
                 </Grid>
