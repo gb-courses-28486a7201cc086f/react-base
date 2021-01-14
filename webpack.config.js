@@ -1,26 +1,31 @@
 const { resolve } = require("path");
 const path = require("path");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     mode: "development",
     devServer: {
         host: "0.0.0.0",
         port: "8180",
-        publicPath: "/static/build/",
         historyApiFallback: {
             index: "index.html"
         },
     },
-    devtool: "inline-cheap-module-source-map",
+    devtool: "inline-source-map",
     entry: {
         app: "./index.jsx"
     },
     context: path.resolve(__dirname, "src"),
     output: {
         path: path.resolve(__dirname, "static", "build"),
-        filename: "app.js"
+        filename: "./[name].bundle.js",
+        publicPath: "/"
     },
+    plugins: [new HtmlWebpackPlugin({
+        title: "MyMessenger",
+        template: './index.html'
+    })],
     resolve: {
         extensions: ['.js', '.jsx']
     },

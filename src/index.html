@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body style="height: 100%; margin: unset;">
     <div style="height: 100%" id="root"></div>
-    <script src="./static/build/app.js"></script>
+    <%= htmlWebpackPlugin.tags.bodyTags %>
 </body>
 </html>
