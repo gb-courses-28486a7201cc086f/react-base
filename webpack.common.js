@@ -4,15 +4,6 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    mode: "development",
-    devServer: {
-        host: "0.0.0.0",
-        port: "8180",
-        historyApiFallback: {
-            index: "index.html"
-        },
-    },
-    devtool: "inline-source-map",
     entry: {
         app: "./index.jsx"
     },
