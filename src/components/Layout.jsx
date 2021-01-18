@@ -1,104 +1,117 @@
-import React from "react";
-import { Link, useHistory } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { bindActionCreators } from "redux";
+import connect from  "react-redux/es/connect/connect";
+import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Hidden from '@material-ui/core/Hidden';
 
 import { Header } from "./Header";
-import { ChatList } from "./ChatList";
-import { MessageContainer } from "./MessageContainer";
-import { MessageStore } from "../MessageStore";
-
-import "../styles/styles.css"
-
-const messages = new MessageStore();
-// display first available chat by default
-const defaultChatId = Object.keys(messages.getChatTitles())[0];
+import ChatList from "./ChatList";
+import MessageList from "./MessageList";
+import SendMessageForm from "./SendMessageForm";
+import { changeChat } from "../store/actions/navi";
 
 /**
  * Top-level component, which contains header, chat list and message area
  * @param {Object} props Component properties object
- * @param {string} props.chatId ID of current chat
- * @param {string} props.chatsBaseUri Chats URI base path 
+ * @param {Object} props.navi (redux) Object which contains navigation data
+ * @param {Object} props.chats (redux) Object which contains chats data
+ * @param {Object} props.profile (redux) Object which contains profile data
+ * @param {function(string)} props.changeChat (redux) Action to save selected chatId in store
  */
-export const Layout = (props) => {
-    const makeChatPath = (id) =>  `${props.chatsBaseUri}/${id}`;
-    const history = useHistory();
-
-    // shitch to default chat if not selected
-    if (props.chatId === undefined) {
-        history.push(makeChatPath(defaultChatId));
-        return <></>;
+const Layout = (props) => {
+    // check if selected chat exists
+    let actualChatId;
+    let selectedChats = props.chats.filter((c) => c.chatId === props.chatId);
+    if (selectedChats.length != 0) {
+        // chat exists
+        actualChatId = props.chatId;
     }
 
-    const currentChatId = props.chatId;
-    const currentPath = makeChatPath(currentChatId);
-    const titlesMap = messages.getChatTitles();
-
-    // create new map with uri paths as keys (instead of ids)
-    // to use in ChatList component
-    let pathMap = {};
-    for (let id in titlesMap) {
-        pathMap[makeChatPath(id)] = titlesMap[id];
-    }
+    // set up new chatId in redux store
+    useEffect(() => {
+        if (actualChatId !== undefined) {
+            props.changeChat(actualChatId);
+        }
+    }, [actualChatId]);
     
-    // update get/add message methods and rerender
-    const getMessages = () => {
-        return messages.getMessages(currentChatId);
-    }
-    const addMessage = (author, text) => {
-        return messages.addMessage(currentChatId, author, text);
-    }
-    
-    // add chat and switch to it
-    const newChat = (title) => {
-        let newChatId = messages.addChat(title);
-        history.push(makeChatPath(newChatId));
-    }
-    
-    // TODO switch to chat list on xs screens
+    // switch to chat list on xs screens
     const backButton = (
         <Hidden smUp>
-            <IconButton 
-                edge="start" 
-                color="inherit" 
-                aria-label="chats"
-                >
-                <ArrowBackIcon/>
-            </IconButton>
+            <Link to={"/"}>
+                <IconButton 
+                    edge="start" 
+                    color="inherit" 
+                    aria-label="chats"
+                    >
+                    <ArrowBackIcon/>
+                </IconButton>
+            </Link>
         </Hidden>
     );
 
     const profileButton = (
-        <Link to={`${props.profileUri}`}>
-            <Button color="inherit">Профиль</Button>
+        <Link to={`${props.navi.profilePath}`}>
+            <Button color="inherit">
+                {`${props.profile.name}`}
+                <AccountCircle/>
+            </Button>
         </Link>
     );
+
+    // until chat not selected render
+    // chat list and empty message field
+    if (actualChatId === undefined) {
+        return (
+            <div className="root">
+                <Header 
+                    title={`Выберите чат:`}
+                    rightButton={profileButton}
+                    />
+                <Grid container className="content-container">
+                    <Grid item xs={12} sm={4} xl={2} className="chat-list">
+                        <ChatList/>
+                    </Grid>
+                    <Hidden xsDown>
+                        <Grid item sm className="message-container">
+                            <MessageList/>
+                        </Grid>
+                    </Hidden>
+                </Grid>
+            </div>
+        );
+    }
 
     return (
         <div className="root">
             <Header 
-                title={`Чат: ${titlesMap[currentChatId]}`}
+                title={`Чат: ${props.chatTitle}`}
                 leftButton={backButton}
                 rightButton={profileButton}
                 />
             <Grid container className="content-container">
                 <Grid item xs sm={4} xl={2} className="chat-list">
-                    <ChatList 
-                        chatPath={currentPath}
-                        chatTitles={pathMap}
-                        addChat={newChat}
-                        />
+                    <ChatList/>
                 </Grid>
                 <Grid item xs={12} sm className="message-container">
-                    <MessageContainer 
-                        getMessages={getMessages}
-                        addMessage={addMessage}
-                        />
+                    <MessageList/>
+                    <SendMessageForm/>
                 </Grid>
             </Grid>
         </div>
     );
 }
+
+const mapStateToProps = ({chatReducer, naviReducer, profileReducer}) => ({
+        navi: naviReducer,
+        chats: chatReducer,
+        profile: profileReducer,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({changeChat}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);
