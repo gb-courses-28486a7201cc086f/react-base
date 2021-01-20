@@ -25,11 +25,12 @@ import { changeChat } from "../store/actions/navi";
  */
 const Layout = (props) => {
     // check if selected chat exists
-    let actualChatId;
+    let actualChatId, actualChatTitle;
     let selectedChats = props.chats.filter((c) => c.chatId === props.chatId);
     if (selectedChats.length != 0) {
         // chat exists
         actualChatId = props.chatId;
+        actualChatTitle = selectedChats[0].title
     }
 
     // set up new chatId in redux store
@@ -39,7 +40,7 @@ const Layout = (props) => {
         }
     }, [actualChatId]);
     
-    // switch to chat list on xs screens
+    // switch to chat list on xs screensactualChatTitle
     const backButton = (
         <Hidden smUp>
             <Link to={"/"}>
@@ -89,7 +90,7 @@ const Layout = (props) => {
     return (
         <div className="root">
             <Header 
-                title={`Чат: ${props.chatTitle}`}
+                title={`Чат: ${actualChatTitle}`}
                 leftButton={backButton}
                 rightButton={profileButton}
                 />
