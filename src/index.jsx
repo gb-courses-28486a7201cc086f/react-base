@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { BrowserRouter } from 'react-router-dom';
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
 
 import Router from "./components/Router";
-import initStore from "./store";
+import initStore, { history } from "./store";
 
 import "./styles/styles.css"
 
@@ -13,11 +13,11 @@ const store = initStore();
 
 ReactDOM.render(
     <Provider store={store}>
-        <BrowserRouter>
+        <ConnectedRouter history={history}>
             <MuiThemeProvider>
                 <Router/>
             </MuiThemeProvider>
-        </BrowserRouter>
+        </ConnectedRouter>
     </Provider>,
     document.getElementById("root")
 );

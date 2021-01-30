@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { bindActionCreators } from "redux";
 import connect from  "react-redux/es/connect/connect";
+import { push } from "connected-react-router";
 import { Link } from 'react-router-dom';
 import { TextField } from 'material-ui';
 import { styled } from '@material-ui/core/styles';
@@ -22,7 +23,7 @@ const BlinkListItem = styled(ListItem)({
     background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
 });
 
-function makeChatList(titlesMap, currentChat, blinkChat) {
+function makeChatList(titlesMap, currentChat, blinkChat, handleNavigate) {
     const makeListItem = (chat, idx) => {
         const chatTitle = titlesMap[chat];
         const itemContent = (<>
@@ -31,33 +32,29 @@ function makeChatList(titlesMap, currentChat, blinkChat) {
                 </ListItemAvatar>
                 <ListItemText primary={chatTitle}/>
         </>);
-        
-        let item = (<>
-            <ListItem
-                button
-                selected={chat === currentChat}
-                >
-                {itemContent}
-            </ListItem>
-        </>);
+
         if (chat === blinkChat) {
-            item = (<>
+            return (
                 <BlinkListItem
                     button
                     selected={chat === currentChat}
+                    onClick={() => handleNavigate(chat)}
+                    key={`chat_${idx}`}
                     >
                     {itemContent}
                 </BlinkListItem>
-            </>);
+            );
         } 
         
         return (
-            <Link 
+            <ListItem
+                button
+                selected={chat === currentChat}
+                onClick={() => handleNavigate(chat)}
                 key={`chat_${idx}`}
-                to={`${chat}`}
                 >
-                {item}
-            </Link>
+                {itemContent}
+            </ListItem>
         );
     }
 
@@ -74,6 +71,7 @@ function makeChatList(titlesMap, currentChat, blinkChat) {
  * @param {string} props.blinkChatId (redux) ID of chat which has some event occurred
  * @param {function(string)} props.addChat (redux action) Callback for new chat adding
  * @param {function(string)} props.blinkChat (redux action) Callback for chat highlighting
+ * @param {function(string)} props.push (redux action) Callback for switch route
  */
 const ChatList = (props) => {
     const getChatPath = (id) => `${props.chatsBase}/${id}/`;
@@ -108,6 +106,10 @@ const ChatList = (props) => {
         setText("");
     }
 
+    function handleNavigate(link) {
+        props.push(link);
+    }
+
     const currentChatPath = getChatPath(props.currentChatId);
     const blinkChatPath = getChatPath(props.blinkChatId);
     const chatPathtoTitles = {};
@@ -118,7 +120,7 @@ const ChatList = (props) => {
     return (
         <List>
             <Subheader>Активные чаты</Subheader>
-            { makeChatList(chatPathtoTitles, currentChatPath, blinkChatPath) }
+            { makeChatList(chatPathtoTitles, currentChatPath, blinkChatPath, handleNavigate) }
             <Divider/>
             <Subheader>Новый чат</Subheader>
             <ListItem style={{flexDirection: "column"}}>
@@ -147,6 +149,6 @@ const mapStateToProps = ({chatReducer, naviReducer}) => ({
     blinkChatId: naviReducer.blinkChatId, // blink chat events
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({addChat, blinkChat}, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({addChat, blinkChat, push}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatList);
