@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { bindActionCreators } from "redux";
 import connect from  "react-redux/es/connect/connect";
 import { Link } from 'react-router-dom';
 import { TextField } from 'material-ui';
+import { styled } from '@material-ui/core/styles';
 import Avatar from 'material-ui/Avatar';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -13,24 +14,49 @@ import Subheader from 'material-ui/Subheader';
 import Button from '@material-ui/core/Button';
 
 import { addChat } from "../store/actions/chat";
+import { blinkChat } from "../store/actions/navi";
 
-function makeChatList(titlesMap, currentChat) {
+const blinkTimeout = 200; //milliseconds
+
+const BlinkListItem = styled(ListItem)({
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+});
+
+function makeChatList(titlesMap, currentChat, blinkChat) {
     const makeListItem = (chat, idx) => {
         const chatTitle = titlesMap[chat];
+        const itemContent = (<>
+                <ListItemAvatar>
+                    <Avatar src={`https://picsum.photos/seed/${idx}/200`} />
+                </ListItemAvatar>
+                <ListItemText primary={chatTitle}/>
+        </>);
+        
+        let item = (<>
+            <ListItem
+                button
+                selected={chat === currentChat}
+                >
+                {itemContent}
+            </ListItem>
+        </>);
+        if (chat === blinkChat) {
+            item = (<>
+                <BlinkListItem
+                    button
+                    selected={chat === currentChat}
+                    >
+                    {itemContent}
+                </BlinkListItem>
+            </>);
+        } 
+        
         return (
             <Link 
                 key={`chat_${idx}`}
                 to={`${chat}`}
                 >
-                <ListItem
-                    button
-                    selected={chat === currentChat}
-                    >
-                    <ListItemAvatar>
-                        <Avatar src={`https://picsum.photos/seed/${idx}/200`} />
-                    </ListItemAvatar>
-                    <ListItemText primary={chatTitle}/>
-                </ListItem>
+                {item}
             </Link>
         );
     }
@@ -45,12 +71,25 @@ function makeChatList(titlesMap, currentChat) {
  * @param {string} props.chats (redux) Object which contains chats data
  * @param {Object} props.chatsBase (redux) Base URI path for chats
  * @param {string} props.currentChatId (redux) ID of selected chat
+ * @param {string} props.blinkChatId (redux) ID of chat which has some event occurred
  * @param {function(string)} props.addChat (redux action) Callback for new chat adding
+ * @param {function(string)} props.blinkChat (redux action) Callback for chat highlighting
  */
 const ChatList = (props) => {
     const getChatPath = (id) => `${props.chatsBase}/${id}/`;
     
     const [text, setText] = useState("");
+
+    // blink chat effect
+    useEffect(() => {
+        // cancel chat highlighting:
+        // set id to null -> none will be selected
+        if (props.blinkChatId !== null) {
+            setTimeout(() => {
+                props.blinkChat(null);
+            }, blinkTimeout);
+        }
+    }, [props.blinkChatId]);
 
     function handleChange(e) {
         setText(e.target.value);
@@ -70,6 +109,7 @@ const ChatList = (props) => {
     }
 
     const currentChatPath = getChatPath(props.currentChatId);
+    const blinkChatPath = getChatPath(props.blinkChatId);
     const chatPathtoTitles = {};
     for (let item of props.chats) {
         chatPathtoTitles[getChatPath(item.chatId)] = item.title;
@@ -78,7 +118,7 @@ const ChatList = (props) => {
     return (
         <List>
             <Subheader>Активные чаты</Subheader>
-            { makeChatList(chatPathtoTitles, currentChatPath) }
+            { makeChatList(chatPathtoTitles, currentChatPath, blinkChatPath) }
             <Divider/>
             <Subheader>Новый чат</Subheader>
             <ListItem style={{flexDirection: "column"}}>
@@ -104,8 +144,9 @@ const mapStateToProps = ({chatReducer, naviReducer}) => ({
     chats: chatReducer,
     chatsBase: naviReducer.chatsBase,
     currentChatId: naviReducer.currentChatId,
+    blinkChatId: naviReducer.blinkChatId, // blink chat events
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({addChat}, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators({addChat, blinkChat}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatList);

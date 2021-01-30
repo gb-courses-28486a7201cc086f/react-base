@@ -1,5 +1,5 @@
 import { SEND_MESSAGE, sendMessage } from "../store/actions/message";
-import { CHANGE_CHAT } from "../store/actions/navi";
+import { CHANGE_CHAT, blinkChat } from "../store/actions/navi";
 
 const messageBot = {
     name: "bot",
@@ -18,12 +18,10 @@ const messageBot = {
  */
 export default store => next => action => {
     const state = store.getState();
-    let chatId;
+    const chatId = action.chatId;
 
     switch(action.type) {
         case SEND_MESSAGE:
-            // chat not changed -> use id from state
-            chatId = state.naviReducer.currentChatId
             // answer to user message:
             // last message is not from bot -> should answer
             if (action.author !== messageBot.name) {
@@ -32,12 +30,16 @@ export default store => next => action => {
                         sendMessage(chatId, messageBot.name, messageBot.answerText)
                     );
                 }, messageBot.delay);
+            } 
+            // last message from bot -> should highlight chat ("blink")
+            else {
+                store.dispatch(
+                    blinkChat(chatId)
+                );
             }
             break;
         
         case CHANGE_CHAT:
-            // new chat selected -> use id from action
-            chatId = action.chatId;
             const selectedChat = state.chatReducer.filter((c) => c.chatId === chatId)[0];
             const chatTitle = selectedChat === undefined? null : selectedChat.title;
             const messages = state.messageReducer[chatId];
