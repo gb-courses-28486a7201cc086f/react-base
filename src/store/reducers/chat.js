@@ -1,4 +1,4 @@
-import { ADD_CHAT } from "../actions/chat";
+import { ADD_CHAT, DEL_CHAT } from "../actions/chat";
 
 const initialState = [
     {chatId: "1", title: "Brendan Lim"},
@@ -17,6 +17,10 @@ export default function chatReducer(store=initialState, action) {
             };
 
             return [...store, newChat];
+
+        case DEL_CHAT:
+            // filter out chat with ID from delete action
+            return store.filter((item) => !(action.chatId === item.chatId));
 
         default:
             return store;
