@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { bindActionCreators } from "redux";
+import connect from  "react-redux/es/connect/connect";
 import { Link } from 'react-router-dom';
 import { TextField } from 'material-ui';
 import Avatar from 'material-ui/Avatar';
@@ -10,6 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Subheader from 'material-ui/Subheader';
 import Button from '@material-ui/core/Button';
 
+import { addChat } from "../store/actions/chat";
 function makeChatList(titlesMap, currentChat) {
     const makeListItem = (chat, idx) => {
         const chatTitle = titlesMap[chat];
@@ -38,11 +41,14 @@ function makeChatList(titlesMap, currentChat) {
  * Displays chats list panel
  * 
  * @param {Object} props Component properties object
- * @param {string} props.chatPath URI path of current chat
- * @param {Object} props.chatTitles Object which contans all chat titles (path as key)
- * @param {function(string)} props.addChat Callback for new chat adding
+ * @param {string} props.chats (redux) Object which contains chats data
+ * @param {Object} props.chatsBase (redux) Base URI path for chats
+ * @param {string} props.currentChatId (redux) ID of selected chat
+ * @param {function(string)} props.addChat (redux action) Callback for new chat adding
  */
-export const ChatList = (props) => {
+const ChatList = (props) => {
+    const getChatPath = (id) => `${props.chatsBase}/${id}/`;
+    
     const [text, setText] = useState("");
 
     function handleChange(e) {
@@ -61,22 +67,44 @@ export const ChatList = (props) => {
         props.addChat(text);
         setText("");
     }
+
+    const currentChatPath = getChatPath(props.currentChatId);
+    const chatPathtoTitles = {};
+    for (let item of props.chats) {
+        chatPathtoTitles[getChatPath(item.chatId)] = item.title;
+    }
     
     return (
         <List>
             <Subheader>Активные чаты</Subheader>
-            { makeChatList(props.chatTitles, props.chatPath) }
+            { makeChatList(chatPathtoTitles, currentChatPath) }
             <Divider/>
             <Subheader>Новый чат</Subheader>
-            <ListItem>
+            <ListItem style={{flexDirection: "column"}}>
                 <TextField 
+                    fullWidth={true}
                     hintText="Имя чата"
                     value={text} 
                     onChange={handleChange}
                     onKeyUp={handleKeyUp}      
                     />
-                <Button variant="contained" onClick={handleClick}>+</Button>
+                <Button
+                    variant="outlined" 
+                    color="primary"
+                    onClick={handleClick}
+                    >добавить
+                </Button>
             </ListItem>
         </List>
     );
 }
+
+const mapStateToProps = ({chatReducer, naviReducer}) => ({
+    chats: chatReducer,
+    chatsBase: naviReducer.chatsBase,
+    currentChatId: naviReducer.currentChatId,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({addChat}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatList);
