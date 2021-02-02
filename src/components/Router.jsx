@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { bindActionCreators } from "redux";
-import connect from "react-redux/es/connect/connect";
+import { useDispatch } from "react-redux";
 import { Switch, Route } from 'react-router-dom'
 
 import Layout from './Layout';
@@ -17,11 +16,13 @@ const profilePath = "/profile/";
  * @param {function(Object)} props.setPath (redux) Action to save router config to store 
  */
 const Router = (props) => {
+    const dispatch = useDispatch();
+
     useEffect(() => {
-        props.setPath({
+        dispatch(setPath({
             chatsBase: chatsBase,
             profilePath: profilePath,
-        });
+        }));
     }, []);
 
     return (
@@ -35,6 +36,4 @@ const Router = (props) => {
     );
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({setPath}, dispatch);
-
-export default connect(null, mapDispatchToProps)(Router);
+export default Router;
