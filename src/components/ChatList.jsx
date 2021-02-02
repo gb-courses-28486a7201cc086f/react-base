@@ -13,7 +13,6 @@ import Subheader from 'material-ui/Subheader';
 import Button from '@material-ui/core/Button';
 
 import { addChat } from "../store/actions/chat";
-
 function makeChatList(titlesMap, currentChat) {
     const makeListItem = (chat, idx) => {
         const chatTitle = titlesMap[chat];
