@@ -1,5 +1,6 @@
 import { SEND_MESSAGE } from "../actions/message";
 import { DEL_CHAT } from "../actions/chat";
+import { SUCCESS_MESSAGE_LOADING } from "../actions/api";
 
 const initialState = {};
 
@@ -28,6 +29,16 @@ export default function messageReducer(store=initialState, action) {
                     newStore[key] = store[key];
                 }
             }
+            return newStore;            
+
+        case SUCCESS_MESSAGE_LOADING:
+            newStore = {};
+            for (let item of action.payload) {
+                if (item.messages.length != 0) {
+                    newStore[item.chatId] = item.messages;
+                }
+            }
+
             return newStore;
 
         default:
