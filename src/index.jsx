@@ -1,23 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import { BrowserRouter } from 'react-router-dom';
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import Router from "./components/Router";
-import initStore from "./store";
+import initStore, { history } from "./store";
 
 import "./styles/styles.css"
 
-const store = initStore();
+const {store, persistor} = initStore();
 
 ReactDOM.render(
     <Provider store={store}>
-        <BrowserRouter>
-            <MuiThemeProvider>
-                <Router/>
-            </MuiThemeProvider>
-        </BrowserRouter>
+        <PersistGate loading={null} persistor={persistor}>
+            <ConnectedRouter history={history}>
+                <MuiThemeProvider>
+                    <Router/>
+                </MuiThemeProvider>
+            </ConnectedRouter>
+        </PersistGate>
     </Provider>,
     document.getElementById("root")
 );
