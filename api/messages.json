@@ -1,0 +1,22 @@
+[
+    {
+        "chatId": "1", 
+        "title": "Brendan Lim",
+        "messages": [
+            {"author": "bot", "text": "Привет!"}, 
+            {"author": "bot", "text": "Как дела?"}
+        ]
+    },
+    {
+        "chatId": "2", 
+        "title": "Eric Hoffman",
+        "messages": [
+            {"author": "bot", "text": "Салют"}
+        ]
+    },
+    {
+        "chatId": "3", 
+        "title": "Grace Ng",
+        "messages": []
+    }
+]

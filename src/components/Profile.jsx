@@ -1,5 +1,5 @@
 import React from "react";
-import connect from "react-redux/es/connect/connect";
+import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -7,12 +7,12 @@ import Avatar from 'material-ui/Avatar';
 import Typography from '@material-ui/core/Typography';
 
 import { Header } from "./Header";
+import { loadProfile } from "../store/actions/api";
 
 /**
  * Displays user profile page
  * 
  * @param {Object} props Component properties object
- * @param {string} props.name User name
  */
 const Profile = (props) => {
     const chatsButton = (
@@ -20,11 +20,13 @@ const Profile = (props) => {
             <Button color="inherit">Чаты</Button>
         </Link>
     );
+
+    const name = useSelector(state => state.profileReducer.name);
     
     return (
         <div className="root">
             <Header 
-                title={`Профиль: ${props.name}`}
+                title={`Профиль: ${name}`}
                 rightButton={chatsButton}
                 />
             <Grid container className="content-container">
@@ -43,7 +45,7 @@ const Profile = (props) => {
                             style={{width: "100px", height: "100px"}}
                             />
                         <br/>
-                        <Typography variant="h3">{`${props.name}`}</Typography>
+                        <Typography variant="h3">{`${name}`}</Typography>
                     </Grid>
                 </Grid>
             </Grid>
@@ -51,8 +53,4 @@ const Profile = (props) => {
     );
 }
 
-const mapStateToProps = ({profileReducer}) => ({
-    ...profileReducer,
-});
-
-export default connect(mapStateToProps, null)(Profile);
+export default Profile;

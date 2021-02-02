@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { bindActionCreators } from "redux";
-import connect from  "react-redux/es/connect/connect";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { TextField, FloatingActionButton } from 'material-ui';
 import SendIcon from 'material-ui/svg-icons/content/send';
 
@@ -10,20 +9,23 @@ import { sendMessage } from "../store/actions/message";
  * Displays input for new message and "send" button.
  * 
  * @param {Object} props Component properties object
- * @param {string} props.me (redux) Name of current user
- * @param {string} props.currentChatId (redux) ID of currently selected chat
- * @param {function(string)} props.sendMessage (redux action) Callback for sending new message from input
  */
 const SendMessageForm = (props) => {
+    const state = useSelector(state => ({
+        me: state.profileReducer.name,
+        currentChatId: state.naviReducer.currentChatId,
+    }), shallowEqual);
+    const dispatch = useDispatch();
+
     const [text, setText] = useState("");
     // focus on send form when chat changed
     const formFocus = useRef(null);
     useEffect(() => {
         formFocus.current.focus();
-    }, [props.currentChatId]); 
+    }, [state.currentChatId]); 
 
     const send = (text) => {
-        props.sendMessage(props.currentChatId, props.me, text);
+        dispatch(sendMessage(state.currentChatId, state.me, text));
         setText("");
     };
 
@@ -59,11 +61,4 @@ const SendMessageForm = (props) => {
     );
 };
 
-const mapStateToProps = ({naviReducer, profileReducer}) => ({
-    me: profileReducer.name,
-    currentChatId: naviReducer.currentChatId,
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators({sendMessage}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(SendMessageForm);
+export default SendMessageForm;

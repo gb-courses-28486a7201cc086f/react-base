@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
-import { bindActionCreators } from "redux";
-import connect from  "react-redux/es/connect/connect";
+import { shallowEqual, useSelector, useDispatch } from "react-redux";
 import { Link } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -14,29 +13,38 @@ import ChatList from "./ChatList";
 import MessageList from "./MessageList";
 import SendMessageForm from "./SendMessageForm";
 import { changeChat } from "../store/actions/navi";
+import { loadProfile } from "../store/actions/api";
 
 /**
  * Top-level component, which contains header, chat list and message area
  * @param {Object} props Component properties object
- * @param {Object} props.navi (redux) Object which contains navigation data
- * @param {Object} props.chats (redux) Object which contains chats data
- * @param {Object} props.profile (redux) Object which contains profile data
- * @param {function(string)} props.changeChat (redux) Action to save selected chatId in store
+ * @param {string} props.chatId ID of chat to render. may be undefined
  */
 const Layout = (props) => {
+    const state = useSelector(state => ({
+        navi: state.naviReducer,
+        chats: state.chatReducer,
+        profile: state.profileReducer,
+    }), shallowEqual);
+
+    const dispatch = useDispatch();
+
     // check if selected chat exists
     let actualChatId, actualChatTitle;
-    let selectedChats = props.chats.filter((c) => c.chatId === props.chatId);
+    let selectedChats = state.chats.filter((c) => c.chatId === props.chatId);
     if (selectedChats.length != 0) {
         // chat exists
         actualChatId = props.chatId;
         actualChatTitle = selectedChats[0].title
     }
 
+    // load profile data from api on first mount
+    useEffect(() => dispatch(loadProfile()), []);
+
     // set up new chatId in redux store
     useEffect(() => {
         if (actualChatId !== undefined) {
-            props.changeChat(actualChatId);
+            dispatch(changeChat(actualChatId));
         }
     }, [actualChatId]);
     
@@ -56,9 +64,9 @@ const Layout = (props) => {
     );
 
     const profileButton = (
-        <Link to={`${props.navi.profilePath}`}>
+        <Link to={`${state.navi.profilePath}`}>
             <Button color="inherit">
-                {`${props.profile.name}`}
+                {`${state.profile.name}`}
                 <AccountCircle/>
             </Button>
         </Link>
@@ -107,12 +115,4 @@ const Layout = (props) => {
     );
 }
 
-const mapStateToProps = ({chatReducer, naviReducer, profileReducer}) => ({
-        navi: naviReducer,
-        chats: chatReducer,
-        profile: profileReducer,
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators({changeChat}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Layout);
+export default Layout;

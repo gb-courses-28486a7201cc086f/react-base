@@ -1,7 +1,16 @@
-const initialState = {
-    name: "John Doe",
-}
+import { SUCCESS_PROFILE_LOADING } from "../actions/api"
+
+const initialState = {}
 
 export default function profileReducer(store=initialState, action) {
-    return store;
+    switch (action.type) {
+        case SUCCESS_PROFILE_LOADING:
+            return {
+                ...store,
+                name: action.payload.name,
+            };
+        
+        default:
+            return store;
+    }
 }
